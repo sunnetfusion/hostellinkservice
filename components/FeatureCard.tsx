@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { DivideIcon as LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface FeatureCardProps {
   icon: LucideIcon;
@@ -10,7 +10,8 @@ interface FeatureCardProps {
   delay?: number;
 }
 
-export function FeatureCard({ icon: Icon, title, description, delay = 0 }: FeatureCardProps) {
+export function FeatureCard({ icon, title, description, delay = 0 }: FeatureCardProps) {
+  const Icon = icon;
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}

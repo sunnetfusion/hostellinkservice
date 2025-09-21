@@ -3,8 +3,43 @@
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { ContactForm } from '@/components/ContactForm';
+import { MapComponent } from '@/components/MapComponent';
 
 export default function Contact() {
+  // HostelLink office locations for the map
+  const officeLocations = [
+    {
+      id: "1",
+      name: "HostelLink HQ - Lagos",
+      location: "123 Victoria Island, Lagos State",
+      price: "Main Office",
+      rating: 5.0,
+      image: "https://images.pexels.com/photos/416405/pexels-photo-416405.jpeg?auto=compress&cs=tinysrgb&w=400",
+      facilities: ["Customer Service", "Sales", "Support"],
+      coordinates: [6.4281, 3.4219] as [number, number]
+    },
+    {
+      id: "2", 
+      name: "HostelLink Abuja",
+      location: "456 Central Business District, FCT",
+      price: "Branch Office",
+      rating: 5.0,
+      image: "https://images.pexels.com/photos/416405/pexels-photo-416405.jpeg?auto=compress&cs=tinysrgb&w=400",
+      facilities: ["Customer Service", "Sales"],
+      coordinates: [9.0765, 7.3986] as [number, number]
+    },
+    {
+      id: "3",
+      name: "HostelLink Ibadan", 
+      location: "789 University Road, Oyo State",
+      price: "Branch Office",
+      rating: 5.0,
+      image: "https://images.pexels.com/photos/416405/pexels-photo-416405.jpeg?auto=compress&cs=tinysrgb&w=400",
+      facilities: ["Customer Service", "Support"],
+      coordinates: [7.3956, 3.8962] as [number, number]
+    }
+  ];
+
   const contactInfo = [
     {
       icon: MapPin,
@@ -132,17 +167,14 @@ export default function Contact() {
                 </p>
               </div>
               
-              {/* Map Placeholder */}
-              <div className="h-64 bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="h-12 w-12 text-gray-500 mx-auto mb-2" />
-                  <p className="text-gray-600 dark:text-gray-400 font-medium">
-                    Interactive Map
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-500">
-                    Lagos Business District
-                  </p>
-                </div>
+              {/* Interactive Map */}
+              <div className="h-64">
+                <MapComponent 
+                  hostels={officeLocations}
+                  center={[6.4281, 3.4219]}
+                  zoom={6}
+                  height="256px"
+                />
               </div>
 
               {/* Office Locations */}

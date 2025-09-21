@@ -16,6 +16,8 @@ import {
   X,
 } from 'lucide-react';
 import { FeatureCard } from '@/components/FeatureCard';
+import { MapLocationPicker } from '@/components/MapLocationPicker';
+import { FileUpload } from '@/components/FileUpload';
 import { Button } from '@/components/ui/button';
 import React, { useState, useRef } from 'react';
 
@@ -29,8 +31,8 @@ function CaretakerOnboardingModal({ open, onClose }: { open: boolean; onClose: (
     facilities: [] as string[],
     description: '',
     photos: [] as File[],
+    coordinates: [6.5244, 3.3792] as [number, number],
   });
-  const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const facilitiesList = [
@@ -66,13 +68,21 @@ function CaretakerOnboardingModal({ open, onClose }: { open: boolean; onClose: (
           ? [...prev.facilities, value]
           : prev.facilities.filter((f) => f !== value),
       }));
-    } else if (name === 'photos') {
-      const files = Array.from((e.target as HTMLInputElement).files || []);
-      setForm((prev) => ({ ...prev, photos: files }));
-      setPhotoPreviews(files.map((file) => URL.createObjectURL(file)));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleLocationSelect = (coordinates: [number, number], address: string) => {
+    setForm((prev) => ({
+      ...prev,
+      coordinates,
+      location: address,
+    }));
+  };
+
+  const handleFilesChange = (files: File[]) => {
+    setForm((prev) => ({ ...prev, photos: files }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,8 +97,8 @@ function CaretakerOnboardingModal({ open, onClose }: { open: boolean; onClose: (
         facilities: [],
         description: '',
         photos: [],
+        coordinates: [6.5244, 3.3792],
       });
-      setPhotoPreviews([]);
       setLoading(false);
       onClose();
       alert('Apartment submitted!');
@@ -98,16 +108,20 @@ function CaretakerOnboardingModal({ open, onClose }: { open: boolean; onClose: (
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-lg max-w-lg w-full p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white"
+          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-700 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           aria-label="Close"
           type="button"
+          title="Close"
         >
-          <X size={24} />
+          <X size={20} />
         </button>
+
+        <div className="p-8">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
           Caretaker Onboarding
         </h2>
@@ -132,7 +146,15 @@ function CaretakerOnboardingModal({ open, onClose }: { open: boolean; onClose: (
               value={form.location}
               onChange={handleChange}
               required
+              placeholder="Selected location will appear here"
             />
+            <div className="mt-2">
+              <MapLocationPicker 
+                onLocationSelect={handleLocationSelect}
+                initialLocation={form.coordinates}
+                height="200px"
+              />
+            </div>
           </div>
           <div>
             <label className="block font-medium mb-1">Price (₦)</label>
@@ -191,44 +213,55 @@ function CaretakerOnboardingModal({ open, onClose }: { open: boolean; onClose: (
           </div>
           <div>
             <label className="block font-medium mb-1">Upload Photos</label>
-            <input
-              type="file"
-              name="photos"
-              multiple
-              accept="image/*"
-              className="w-full"
-              onChange={handleChange}
+            <FileUpload
+              onFilesChange={handleFilesChange}
+              maxFiles={10}
+              maxSize={5}
+              acceptedTypes={['image/jpeg', 'image/png', 'image/webp']}
             />
-            <div className="flex gap-2 mt-2">
-              {photoPreviews.map((src, idx) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={idx}
-                  src={src}
-                  alt="Preview"
-                  className="w-16 h-16 object-cover rounded"
-                />
-              ))}
+          </div>
+          {/* Enhanced Commission Display */}
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/30 dark:to-blue-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+              <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mr-2" />
+              Commission Breakdown
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  ₦{price.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Total Price</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-orange-600 dark:text-orange-400">
+                  -₦{commission.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">HostelLink Fee (10%)</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  ₦{payout.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Your Earnings</div>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-gray-600 dark:text-gray-300 text-center">
+              Commission is automatically deducted from each booking payment
             </div>
           </div>
-          {/* Commission Display */}
-          <div className="bg-green-50 dark:bg-green-900 p-3 rounded flex flex-col sm:flex-row gap-4 items-center">
-            <span>
-              <strong>HostelLink Commission (10%):</strong> ₦{commission.toLocaleString()}
-            </span>
-            <span>
-              <strong>You will receive:</strong> ₦{payout.toLocaleString()}
-            </span>
+          <div className="pt-6">
+            <Button
+              type="submit"
+              className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center py-3 px-6 font-semibold"
+              disabled={loading}
+            >
+              {loading ? <Loader2 className="animate-spin mr-2" /> : <Plus className="mr-2" />}
+              Submit Apartment
+            </Button>
           </div>
-          <Button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center"
-            disabled={loading}
-          >
-            {loading ? <Loader2 className="animate-spin mr-2" /> : <Plus className="mr-2" />}
-            Submit Apartment
-          </Button>
         </form>
+        </div>
       </div>
     </div>
   );

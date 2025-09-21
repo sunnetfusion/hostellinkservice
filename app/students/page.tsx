@@ -1,12 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Search, Shield, Calendar, BarChart3, Users, Star } from 'lucide-react';
+import { Search, Shield, Calendar, BarChart3, Users, Star, MapPin } from 'lucide-react';
 import { FeatureCard } from '@/components/FeatureCard';
 import { HostelCard } from '@/components/HostelCard';
+import { MapComponent } from '@/components/MapComponent';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 export default function Students() {
+  const [selectedHostel, setSelectedHostel] = useState<any>(null);
+  const [showMap, setShowMap] = useState(false);
+
   const features = [
     {
       icon: Search,
@@ -38,7 +43,8 @@ export default function Students() {
       price: "₦180,000",
       rating: 4.9,
       image: "https://images.pexels.com/photos/271795/pexels-photo-271795.jpeg?auto=compress&cs=tinysrgb&w=400",
-      facilities: ["WiFi", "Security", "Kitchen", "Parking"]
+      facilities: ["WiFi", "Security", "Kitchen", "Parking"],
+      coordinates: [6.5244, 3.3792] as [number, number]
     },
     {
       id: "2",
@@ -47,7 +53,8 @@ export default function Students() {
       price: "₦140,000",
       rating: 4.7,
       image: "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=400",
-      facilities: ["WiFi", "Kitchen", "Security"]
+      facilities: ["WiFi", "Kitchen", "Security"],
+      coordinates: [7.4951, 4.5169] as [number, number]
     },
     {
       id: "3",
@@ -56,7 +63,8 @@ export default function Students() {
       price: "₦220,000",
       rating: 4.8,
       image: "https://images.pexels.com/photos/1571453/pexels-photo-1571453.jpeg?auto=compress&cs=tinysrgb&w=400",
-      facilities: ["WiFi", "Parking", "Kitchen", "Security"]
+      facilities: ["WiFi", "Parking", "Kitchen", "Security"],
+      coordinates: [6.5244, 3.3792] as [number, number]
     },
     {
       id: "4",
@@ -65,7 +73,8 @@ export default function Students() {
       price: "₦160,000",
       rating: 4.6,
       image: "https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?auto=compress&cs=tinysrgb&w=400",
-      facilities: ["WiFi", "Security", "Kitchen"]
+      facilities: ["WiFi", "Security", "Kitchen"],
+      coordinates: [6.5244, 3.3792] as [number, number]
     },
     {
       id: "5",
@@ -74,7 +83,8 @@ export default function Students() {
       price: "₦130,000",
       rating: 4.5,
       image: "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=400",
-      facilities: ["WiFi", "Parking", "Security"]
+      facilities: ["WiFi", "Parking", "Security"],
+      coordinates: [7.3956, 3.8962] as [number, number]
     },
     {
       id: "6",
@@ -83,7 +93,8 @@ export default function Students() {
       price: "₦190,000",
       rating: 4.8,
       image: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=400",
-      facilities: ["WiFi", "Kitchen", "Parking", "Security"]
+      facilities: ["WiFi", "Kitchen", "Parking", "Security"],
+      coordinates: [6.5244, 3.3792] as [number, number]
     }
   ];
 
@@ -227,15 +238,59 @@ export default function Students() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {sampleHostels.map((hostel, index) => (
-              <HostelCard
-                key={hostel.id}
-                {...hostel}
-                delay={index * 0.1}
-              />
-            ))}
+          {/* Toggle between List and Map View */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+              <button
+                onClick={() => setShowMap(false)}
+                className={`px-4 py-2 rounded-md transition-colors ${
+                  !showMap 
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                List View
+              </button>
+              <button
+                onClick={() => setShowMap(true)}
+                className={`px-4 py-2 rounded-md transition-colors ${
+                  showMap 
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                <MapPin className="inline h-4 w-4 mr-1" />
+                Map View
+              </button>
+            </div>
           </div>
+
+          {showMap ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mb-8"
+            >
+              <MapComponent 
+                hostels={sampleHostels}
+                center={[6.5244, 3.3792]}
+                zoom={10}
+                height="500px"
+                onHostelSelect={setSelectedHostel}
+              />
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {sampleHostels.map((hostel, index) => (
+                <HostelCard
+                  key={hostel.id}
+                  {...hostel}
+                  delay={index * 0.1}
+                />
+              ))}
+            </div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 50 }}

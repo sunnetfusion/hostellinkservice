@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import { Star, MapPin, Wifi, Car, Shield, Utensils } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { BookingModal } from './BookingModal';
 
 interface HostelCardProps {
   id: string;
@@ -15,12 +17,20 @@ interface HostelCardProps {
   delay?: number;
 }
 
-export function HostelCard({ name, location, price, rating, image, facilities, delay = 0 }: HostelCardProps) {
+export function HostelCard({ id, name, location, price, rating, image, facilities, delay = 0 }: HostelCardProps) {
+  const [showBookingModal, setShowBookingModal] = useState(false);
+
   const facilityIcons = {
     'WiFi': Wifi,
     'Parking': Car,
     'Security': Shield,
     'Kitchen': Utensils,
+  };
+
+  const handleBookingSuccess = (bookingData: any) => {
+    console.log('Booking successful:', bookingData);
+    // Here you would typically send the booking data to your backend
+    alert('Inspection booked successfully! You will receive a confirmation email shortly.');
   };
 
   return (
@@ -73,11 +83,30 @@ export function HostelCard({ name, location, price, rating, image, facilities, d
             {price}
             <span className="text-sm font-normal text-gray-600 dark:text-gray-300">/year</span>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Button 
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={() => setShowBookingModal(true)}
+          >
             Book Inspection
           </Button>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={showBookingModal}
+        onClose={() => setShowBookingModal(false)}
+        hostel={{
+          id,
+          name,
+          location,
+          price,
+          rating,
+          image,
+          facilities
+        }}
+        onBookingSuccess={handleBookingSuccess}
+      />
     </motion.div>
   );
 }
