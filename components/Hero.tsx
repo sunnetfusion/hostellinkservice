@@ -1,9 +1,8 @@
+
 'use client';
 
 import { motion } from 'framer-motion';
-import { SearchBar } from '@/components/SearchBar';
-import { Button } from '@/components/ui/button';
-import { Calendar, Shield } from 'lucide-react';
+import HostelSearch from '@/components/HostelSearch'; // Corrected import
 
 export function Hero() {
   return (
@@ -28,20 +27,8 @@ export function Hero() {
               Find verified student hostels, book inspections, and secure your perfect accommodation with confidence. Trusted by thousands of students across Nigeria.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
-                <Calendar className="mr-2 h-5 w-5" />
-                Book Inspection
-              </Button>
-              <Button size="lg" variant="outline" className="px-8 py-3">
-                <Shield className="mr-2 h-5 w-5" />
-                Reserve Hostel
-              </Button>
-            </div>
-
             {/* Search Bar */}
-            <SearchBar />
+            <HostelSearch />
           </motion.div>
 
           {/* Right Content - Hero Image */}

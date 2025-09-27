@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useMapEvents } from 'react-leaflet';
 import { MapPin, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -9,7 +10,6 @@ import { Button } from '@/components/ui/button';
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
-const useMapEvents = dynamic(() => import('react-leaflet').then((mod) => mod.useMapEvents), { ssr: false });
 
 interface MapLocationPickerProps {
   onLocationSelect: (coordinates: [number, number], address: string) => void;

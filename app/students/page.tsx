@@ -6,11 +6,21 @@ import { FeatureCard } from '@/components/FeatureCard';
 import { HostelCard } from '@/components/HostelCard';
 import { MapComponent } from '@/components/MapComponent';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/components/AuthProvider';
+import StudentRegistrationModal from '@/components/StudentRegistrationModal';
 
 export default function Students() {
   const [selectedHostel, setSelectedHostel] = useState<any>(null);
   const [showMap, setShowMap] = useState(false);
+  const { user } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setIsModalOpen(true);
+    }
+  }, [user]);
 
   const features = [
     {
@@ -40,7 +50,7 @@ export default function Students() {
       id: "1",
       name: "Crown Heights Residence",
       location: "2km from University of Lagos",
-      price: "₦180,000",
+      price: 180000,
       rating: 4.9,
       image: "https://images.pexels.com/photos/271795/pexels-photo-271795.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Security", "Kitchen", "Parking"],
@@ -50,7 +60,7 @@ export default function Students() {
       id: "2",
       name: "Scholar's Paradise",
       location: "Walking distance to OAU",
-      price: "₦140,000",
+      price: 140000,
       rating: 4.7,
       image: "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Kitchen", "Security"],
@@ -60,7 +70,7 @@ export default function Students() {
       id: "3",
       name: "Elite Student Lodge",
       location: "Near Covenant University",
-      price: "₦220,000",
+      price: 220000,
       rating: 4.8,
       image: "https://images.pexels.com/photos/1571453/pexels-photo-1571453.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Parking", "Kitchen", "Security"],
@@ -70,7 +80,7 @@ export default function Students() {
       id: "4",
       name: "Comfort Inn Hostel",
       location: "5 mins from UNILAG",
-      price: "₦160,000",
+      price: 160000,
       rating: 4.6,
       image: "https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Security", "Kitchen"],
@@ -80,7 +90,7 @@ export default function Students() {
       id: "5",
       name: "Golden Gate Residence",
       location: "University of Ibadan Area",
-      price: "₦130,000",
+      price: 130000,
       rating: 4.5,
       image: "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Parking", "Security"],
@@ -90,7 +100,7 @@ export default function Students() {
       id: "6",
       name: "Royal Student Suites",
       location: "Close to Babcock University",
-      price: "₦190,000",
+      price: 190000,
       rating: 4.8,
       image: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Kitchen", "Parking", "Security"],
@@ -123,8 +133,10 @@ export default function Students() {
 
   return (
     <div className="min-h-screen">
+      <StudentRegistrationModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-20">
+      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-.gray-900 dark:to-gray-800 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 50 }}

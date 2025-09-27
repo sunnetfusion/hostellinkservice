@@ -14,7 +14,7 @@ interface Hostel {
   id: string;
   name: string;
   location: string;
-  price: string;
+  price: number;
   rating: number;
   image: string;
   facilities: string[];
@@ -49,6 +49,13 @@ export function MapComponent({
     'Parking': Car,
     'Security': Shield,
     'Kitchen': Utensils,
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+    }).format(price);
   };
 
   if (!isClient) {
@@ -115,7 +122,9 @@ export function MapComponent({
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-blue-600">{hostel.price}</span>
+                  {hostel.price > 0 &&
+                    <span className="text-lg font-bold text-blue-600">{formatPrice(hostel.price)}</span>
+                  }
                   {onHostelSelect && (
                     <button
                       onClick={() => onHostelSelect(hostel)}

@@ -45,7 +45,7 @@ export default function Home() {
       id: "1",
       name: "Royal Student Lodge",
       location: "Near University of Lagos",
-      price: "₦150,000",
+      price: 150000,
       rating: 4.8,
       image: "https://images.pexels.com/photos/271795/pexels-photo-271795.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Security", "Kitchen", "Parking"]
@@ -54,7 +54,7 @@ export default function Home() {
       id: "2",
       name: "Elite Hostel Complex",
       location: "Close to Covenant University",
-      price: "₦200,000",
+      price: 200000,
       rating: 4.9,
       image: "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Security", "Kitchen"]
@@ -63,7 +63,7 @@ export default function Home() {
       id: "3",
       name: "Golden Heights",
       location: "University of Ibadan Area",
-      price: "₦120,000",
+      price: 120000,
       rating: 4.6,
       image: "https://images.pexels.com/photos/1571453/pexels-photo-1571453.jpeg?auto=compress&cs=tinysrgb&w=400",
       facilities: ["WiFi", "Parking", "Kitchen"]
