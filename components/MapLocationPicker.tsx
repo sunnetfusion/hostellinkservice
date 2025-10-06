@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useMapEvents } from 'react-leaflet';
 import { MapPin, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useMapEvents } from 'react-leaflet'; // <-- Import the hook directly
 
 // Dynamically import the map components
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });

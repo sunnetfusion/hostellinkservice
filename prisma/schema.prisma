@@ -1,0 +1,167 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+model Student {
+  id            String         @id @default(uuid())
+  fullName      String
+  email         String?        @unique
+  phone         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  inspections   Inspection[]
+  reservations  Reservation[]
+  notifications Notification[]
+  payments      Payment[] // <- added
+}
+
+model Caretaker {
+  id          String    @id @default(uuid())
+  fullName    String
+  email       String?   @unique
+  phone       String?
+  kycPhoto    String?
+  bankName    String?
+  bankAccount String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  hostels     Hostel[]
+  payouts     Payout[]
+  payments    Payment[] // <- added
+}
+
+model Hostel {
+  id             String        @id @default(uuid())
+  caretaker      Caretaker     @relation(fields: [caretakerId], references: [id])
+  caretakerId    String
+  name           String
+  description    String
+  price          Int
+  currency       String        @default("NGN")
+  facilities     Json
+  photos         Json
+  distanceMeters Int?
+  approved       Boolean       @default(false)
+  verifiedAt     DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  inspections    Inspection[]
+  reservations   Reservation[]
+}
+
+model Inspection {
+  id          String           @id @default(uuid())
+  student     Student          @relation(fields: [studentId], references: [id])
+  studentId   String
+  hostel      Hostel           @relation(fields: [hostelId], references: [id])
+  hostelId    String
+  scheduledAt DateTime?
+  status      InspectionStatus @default(PENDING)
+  fee         Int
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // one-to-many: an inspection can have multiple payments (history/refunds)
+  payments Payment[] @relation("InspectionPayment")
+}
+
+model Reservation {
+  id            String            @id @default(uuid())
+  student       Student           @relation(fields: [studentId], references: [id])
+  studentId     String
+  hostel        Hostel            @relation(fields: [hostelId], references: [id])
+  hostelId      String
+  depositAmount Int
+  depositPaidAt DateTime?
+  status        ReservationStatus @default(PENDING)
+  expiresAt     DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  // one-to-many: a reservation can have multiple payments (deposit, refunds)
+  payments Payment[] @relation("ReservationPayment")
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  provider    String
+  providerRef String        @unique
+  amount      Int
+  currency    String        @default("NGN")
+  status      PaymentStatus
+
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?
+
+  caretaker   Caretaker? @relation(fields: [caretakerId], references: [id])
+  caretakerId String?
+
+  // optional FKs to link payment to an inspection or reservation
+  inspection   Inspection? @relation("InspectionPayment", fields: [inspectionId], references: [id])
+  inspectionId String?
+
+  reservation   Reservation? @relation("ReservationPayment", fields: [reservationId], references: [id])
+  reservationId String?
+
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  fullName  String
+  email     String   @unique
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  student   Student?  @relation(fields: [studentId], references: [id])
+  studentId String?
+  channel   String
+  title     String
+  body      String
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Payout {
+  id          String    @id @default(uuid())
+  caretaker   Caretaker @relation(fields: [caretakerId], references: [id])
+  caretakerId String
+  amount      Int
+  status      String
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+enum InspectionStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum ReservationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
